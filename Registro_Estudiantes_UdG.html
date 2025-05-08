@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Actividad Integradora 1 Alberto Rodriguez</title>
+  
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    form {
+      background-color: #fff;
+      padding: 30px 40px;
+      border-radius: 8px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      margin-top: 40px;
+      max-width: 500px;
+      width: 100%;
+    }
+
+    label {
+      font-weight: 600;
+      margin-top: 15px;
+      display: block;
+      color: #333;
+      transition: color 0.3s;
+    }
+
+    input[type="text"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 2px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+      box-sizing: border-box;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .checkbox-group {
+      margin-top: 10px;
+      padding-left: 10px;
+    }
+
+    .checkbox-group label {
+      font-weight: normal;
+      color: #444;
+    }
+
+    input[type="checkbox"] {
+      margin-right: 8px;
+    }
+
+    button {
+      margin-top: 25px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .error {
+      border-color: #dc3545 !important;
+    }
+
+    .valid {
+      border-color: #28a745 !important;
+    }
+
+    .label-error {
+      color: #dc3545 !important;
+    }
+
+    .label-valid {
+      color: #28a745 !important;
+    }
+
+    #catalogo {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="contenedor-principal" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+
+  <form id="formulario" onsubmit="return false;">
+    <h1>Alta de Usuario UdG</h1>
+
+    <label id="labelNombre" for="nombre">Nombre:</label>
+    <input type="text" id="nombre" name="nombre">
+
+    <label id="labelApellido" for="apellido">Apellido:</label>
+    <input type="text" id="apellido" name="apellido">
+
+    <label id="labelCorreo" for="correo">Correo electrónico:</label>
+    <input type="text" id="correo" name="correo">
+
+    <label id="labelDescripcion" for="descripcion">Descripción:</label>
+    <textarea id="descripcion" name="descripcion"></textarea>
+
+    <label id="labelRol" for="rol">Rol:</label>
+    <select id="rol" name="rol">
+      <option value="">Seleccione un rol</option>
+      <option value="asesor">Asesor</option>
+      <option value="estudiante">Estudiante</option>
+      <option value="aspirante">Aspirante</option>
+    </select>
+
+    <label id="labelIntereses">Intereses:</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" name="intereses" value="web"> Desarrollo Web</label><br>
+      <label><input type="checkbox" name="intereses" value="comunicacion"> Comunicación</label><br>
+      <label><input type="checkbox" name="intereses" value="mercadotecnia"> Mercadotecnia</label><br>
+      <label><input type="checkbox" name="intereses" value="finanzas"> Finanzas</label><br>
+      <label><input type="checkbox" name="intereses" value="comercio"> Comercio</label>
+    </div>
+
+    <button id="btnPrincipal" type="button" onclick="validarFormulario()">Registrar</button>
+
+  </form>
+
+  <button id="btnBorrarTodo" style="margin-top: 30px; background-color: #dc3545; color: white; border: none; padding: 10px 20px; font-size: 14px; border-radius: 5px; cursor: pointer; display: none; width: 25%;">
+    🗑️ Borrar Todo
+  </button>
+
+  <div id="catalogo" style="width: 100%; max-width: 900px; margin-top: 40px; display: flex; flex-wrap: wrap; gap: 20px;"></div>
+
+</div>
+
+  <script>
+    let tarjetaEnEdicion = null;
+
+    function validarCampo(idCampo, idLabel) {
+      const campo = document.getElementById(idCampo);
+      const label = document.getElementById(idLabel);
+      if (campo.value.trim() === "") {
+        campo.classList.remove('valid');
+        campo.classList.add('error');
+        label.classList.remove('label-valid');
+        label.classList.add('label-error');
+        return false;
+      } else {
+        campo.classList.remove('error');
+        campo.classList.add('valid');
+        label.classList.remove('label-error');
+        label.classList.add('label-valid');
+        return true;
+      }
+    }
+
+    function validarCheckboxes() {
+      const checkboxes = document.querySelectorAll('input[name="intereses"]');
+      const label = document.getElementById("labelIntereses");
+      let algunoSeleccionado = false;
+      checkboxes.forEach(cb => {
+        if (cb.checked) algunoSeleccionado = true;
+      });
+
+      if (algunoSeleccionado) {
+        label.classList.remove("label-error");
+        label.classList.add("label-valid");
+        return true;
+      } else {
+        label.classList.remove("label-valid");
+        label.classList.add("label-error");
+        return false;
+      }
+    }
+
+function validarFormulario() {
+    const nombreValido = validarCampo("nombre", "labelNombre");
+    const apellidoValido = validarCampo("apellido", "labelApellido");
+    const correoValido = validarCampo("correo", "labelCorreo");
+    const descripcionValida = validarCampo("descripcion", "labelDescripcion");
+
+    const rol = document.getElementById("rol");
+    const labelRol = document.getElementById("labelRol");
+    let rolValido = false;
+    if (rol.value === "") {
+      rol.classList.add("error");
+      rol.classList.remove("valid");
+      labelRol.classList.add("label-error");
+      labelRol.classList.remove("label-valid");
+    } else {
+      rol.classList.add("valid");
+      rol.classList.remove("error");
+      labelRol.classList.add("label-valid");
+      labelRol.classList.remove("label-error");
+      rolValido = true;
+    }
+
+    const interesesValidos = validarCheckboxes();
+
+    if (nombreValido && apellidoValido && correoValido && descripcionValida && rolValido && interesesValidos) {
+  if (tarjetaEnEdicion) {
+    actualizarTarjeta();
+  } else {
+    agregarAlCatalogo();
+  }
+  limpiarFormulario();
+}
+  }
+
+  function agregarAlCatalogo() {
+    const nombre = document.getElementById("nombre").value;
+    const apellido = document.getElementById("apellido").value;
+    const correo = document.getElementById("correo").value;
+    const descripcion = document.getElementById("descripcion").value;
+    const rol = document.getElementById("rol").value;
+    const interesesSeleccionados = Array.from(document.querySelectorAll('input[name="intereses"]:checked')).map(cb => cb.parentElement.textContent.trim());
+
+    const tarjeta = document.createElement("div");
+    tarjeta.classList.add("tarjeta-usuario");
+    tarjeta.style.background = "#ffffff";
+    tarjeta.style.border = "1px solid #ddd";
+    tarjeta.style.borderRadius = "8px";
+    tarjeta.style.padding = "20px";
+    tarjeta.style.width = "calc(50% - 20px)";
+    tarjeta.style.boxShadow = "0 4px 8px rgba(0,0,0,0.05)";
+    tarjeta.style.position = "relative";
+
+    tarjeta.innerHTML = `
+      <h3>${nombre} ${apellido}</h3>
+      <p><strong>Correo:</strong> ${correo}</p>
+      <p><strong>Rol:</strong> ${rol.charAt(0).toUpperCase() + rol.slice(1)}</p>
+      <p><strong>Descripción:</strong><br>${descripcion}</p>
+      <p><strong>Intereses:</strong> ${interesesSeleccionados.join(", ")}</p>
+    `;
+
+    const btnEliminar = document.createElement("button");
+    btnEliminar.innerHTML = "❌";
+    btnEliminar.title = "Eliminar este registro";
+    btnEliminar.style.position = "absolute";
+    btnEliminar.style.top = "10px";
+    btnEliminar.style.right = "10px";
+    btnEliminar.style.background = "transparent";
+    btnEliminar.style.border = "none";
+    btnEliminar.style.fontSize = "18px";
+    btnEliminar.style.cursor = "pointer";
+
+    const btnEditar = document.createElement("button");
+btnEditar.innerHTML = "✏️";
+btnEditar.title = "Editar este registro";
+btnEditar.style.position = "absolute";
+btnEditar.style.top = "10px";
+btnEditar.style.left = "10px";
+btnEditar.style.background = "transparent";
+btnEditar.style.border = "none";
+btnEditar.style.fontSize = "18px";
+btnEditar.style.cursor = "pointer";
+
+btnEditar.addEventListener("click", () => {
+  document.getElementById("nombre").value = nombre;
+  document.getElementById("apellido").value = apellido;
+  document.getElementById("correo").value = correo;
+  document.getElementById("descripcion").value = descripcion;
+  document.getElementById("rol").value = rol;
+
+  // Limpiar y marcar intereses
+  document.querySelectorAll('input[name="intereses"]').forEach(cb => cb.checked = false);
+  interesesSeleccionados.forEach(interes => {
+    const cb = Array.from(document.querySelectorAll('input[name="intereses"]')).find(cb => cb.parentElement.textContent.trim() === interes);
+    if (cb) cb.checked = true;
+  });
+
+  tarjetaEnEdicion = tarjeta;
+  document.getElementById("btnPrincipal").textContent = "Actualizar";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+
+    // Evento de borrar individual
+    btnEliminar.addEventListener("click", () => {
+      tarjeta.remove();
+      verificarCatalogoVacio();
+    });
+
+    tarjeta.appendChild(btnEliminar);
+
+    tarjeta.appendChild(btnEditar);
+
+    const catalogo = document.getElementById("catalogo");
+    catalogo.appendChild(tarjeta);
+
+    document.getElementById("btnBorrarTodo").style.display = "inline-block";
+  }
+
+  function actualizarTarjeta() {
+  const nombre = document.getElementById("nombre").value;
+  const apellido = document.getElementById("apellido").value;
+  const correo = document.getElementById("correo").value;
+  const descripcion = document.getElementById("descripcion").value;
+  const rol = document.getElementById("rol").value;
+  const interesesSeleccionados = Array.from(document.querySelectorAll('input[name="intereses"]:checked')).map(cb => cb.parentElement.textContent.trim());
+
+  tarjetaEnEdicion.querySelector("h3").textContent = `${nombre} ${apellido}`;
+  tarjetaEnEdicion.querySelector("p:nth-of-type(1)").innerHTML = `<strong>Correo:</strong> ${correo}`;
+  tarjetaEnEdicion.querySelector("p:nth-of-type(2)").innerHTML = `<strong>Rol:</strong> ${rol.charAt(0).toUpperCase() + rol.slice(1)}`;
+  tarjetaEnEdicion.querySelector("p:nth-of-type(3)").innerHTML = `<strong>Descripción:</strong><br>${descripcion}`;
+  tarjetaEnEdicion.querySelector("p:nth-of-type(4)").innerHTML = `<strong>Intereses:</strong> ${interesesSeleccionados.join(", ")}`;
+
+  tarjetaEnEdicion = null;
+
+  document.getElementById("btnPrincipal").textContent = "Validar";
+
+}
+
+
+  // Borrar todos los elementos
+  document.getElementById("btnBorrarTodo").addEventListener("click", () => {
+    document.getElementById("catalogo").innerHTML = "";
+    document.getElementById("btnBorrarTodo").style.display = "none";
+  });
+
+  // Ocultar botón si ya no hay tarjetas
+  function verificarCatalogoVacio() {
+    const catalogo = document.getElementById("catalogo");
+    if (catalogo.children.length === 0) {
+      document.getElementById("btnBorrarTodo").style.display = "none";
+    }
+  }
+
+  function limpiarFormulario() {
+    document.getElementById("formulario").reset();
+
+    const inputs = document.querySelectorAll("input, textarea, select");
+    inputs.forEach(el => {
+      el.classList.remove("valid", "error");
+    });
+
+    const labels = document.querySelectorAll("label");
+    labels.forEach(label => {
+      label.classList.remove("label-valid", "label-error");
+    });
+  }
+  </script>
+</body>
+</html>
+
